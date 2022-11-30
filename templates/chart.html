@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+  canvas { 
+  height: 90vh; 
+  width: 100vw; 
+  display: block;
+}
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.js"></script>
+  
+ </head>
+ <body>
+
+  <h2>Most mentioned countries on Twitter</h2>
+  <input type="text" class="input_number" placeholder="가져올 트윗의 수를 입력하세요">
+  <button onclick="show_chart()" type ="button"> 가져오기 </button>
+ 
+  <div id ="canvasContainer">
+    <canvas id="myChart" ></canvas>
+  </div>
+  <script>
+  var canvas = document.getElementById("myChart");
+  const img = new Image();
+  const ctx = canvas.getContext("2d");
+  img.src = "https://i0.wp.com/www.middleeastmonitor.com/wp-content/uploads/2019/09/The-official-emblem-of-the-2022-World-Cup-in-Qatar-e1567667795710.png?resize=1200%2C799&quality=85&strip=all&zoom=1&ssl=1";
+  img.onload = function(){
+  ctx.drawImage(img,0,0,img.width,img.height,0, 0, canvas.width, canvas.height);
+  }
+  
+  var mychart;
+  function show_chart(){
+  	console.log("waiting");
+   	var num = document.querySelector('.input_number').value;
+   	var ddict = {'number': num};
+  	 $.ajax({
+        url: "{% url 'getData'%}",
+        type : "POST",
+        data: JSON.stringify(ddict),
+	
+        success: function (data) {
+        	
+        	var jsonobj = JSON.parse(data)
+        	
+        	console.log(typeof jsonobj)
+        	console.log(Object.keys(data))
+        	if (mychart){
+        	    var temp = mychart.data.labels.length;
+			for (var i= 0; i<temp; i++)
+			{	
+				mychart.data.labels.pop();
+								
+			}
+			temp = mychart.data.datasets[0].data.length;
+			for (var i= 0; i<temp; i++)
+			{	
+				mychart.data.datasets[0].data.pop();
+								
+			}
+			console.log(mychart.data.datasets[0].data)
+			mychart.update();
+
+			Object.keys(jsonobj).forEach(element => mychart.data.labels.push(element));
+			
+			Object.values(jsonobj).forEach(element => mychart.data.datasets[0].data.push(element));
+			
+			mychart.update();
+        	}
+        	
+        	else{
+        	mychart = new Chart(canvas, {
+		type: 'bar',
+		data: {
+			labels: Object.keys(jsonobj),
+			datasets: [{
+				label: '# of tweets',
+				data: Object.values(jsonobj),
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)'
+				],
+				borderColor: [
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				
+			}
+		}
+	});
+        }	
+        },
+        error: function (request, error) {
+            console.log('실패');
+            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+
+        }
+    });
+    }
+		
+ </script>
+ </body>
+</html>
