@@ -3,7 +3,7 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>Most mentioned countries on Twitter</title>
   <style>
   canvas { 
   height: 90vh; 
@@ -19,25 +19,28 @@
 
   <h2>Most mentioned countries on Twitter</h2>
   <input type="text" class="input_number" placeholder="가져올 트윗의 수를 입력하세요">
+  <input type="text" class="input_tag_list" placeholder="가져올 해시태그를 입력하세요">
   <button onclick="show_chart()" type ="button"> 가져오기 </button>
  
   <div id ="canvasContainer">
-    <canvas id="myChart" ></canvas>
+    <canvas id="myChart" width="1920" height="780"></canvas>
   </div>
   <script>
   var canvas = document.getElementById("myChart");
   const img = new Image();
   const ctx = canvas.getContext("2d");
-  img.src = "https://i0.wp.com/www.middleeastmonitor.com/wp-content/uploads/2019/09/The-official-emblem-of-the-2022-World-Cup-in-Qatar-e1567667795710.png?resize=1200%2C799&quality=85&strip=all&zoom=1&ssl=1";
+  img.src = "{% static 'main.jpg' %}";
   img.onload = function(){
-  ctx.drawImage(img,0,0,img.width,img.height,0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img,canvas.width/2 - img.width / 2,
+        canvas.height / 2 - img.height / 2);
   }
   
   var mychart;
   function show_chart(){
   	console.log("waiting");
    	var num = document.querySelector('.input_number').value;
-   	var ddict = {'number': num};
+   	var tag = document.querySelector('.input_tag_list').value;
+   	var ddict = {'number': num, 'tag' : tag};
   	 $.ajax({
         url: "{% url 'getData'%}",
         type : "POST",

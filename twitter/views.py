@@ -6,15 +6,16 @@ from django.http import JsonResponse
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 
+T = tweet.Tweet()
 a = {1: 'a'}
-def index(request):
+def index(request):	
 	return render(request, 'chart.html')
 
 @csrf_exempt
 def getData(request):
 	obj = json.loads(request.body)
 	num = obj.get('number')
-		
-	T = tweet.Tweet(int(num))
-	context = T.do(["football", "worldcup", "soccer"])
+	tag_string = obj.get('tag')
+	taglist = tag_string.split()
+	context = T.do(taglist,int(num))
 	return HttpResponse(context)

@@ -60,7 +60,7 @@ def map_contry(x):
     
 
 class Tweet:
-    def __init__(self, limit = 1000) -> None:
+    def __init__(self) -> None:
         
         self.tweet_dic = {}
         self.bearer_token = "AAAAAAAAAAAAAAAAAAAAAL60jgEAAAAAM%2FlGZy2vYiMx6UqhD73jMnzZwl0%3DIpkhxidEWvwV0daNGljKXsy4l2heR8hIJBfdskbETfwVQNH0nH"
@@ -68,9 +68,8 @@ class Tweet:
         self.myConf = pyspark.SparkConf()
         self.spark = pyspark.sql.SparkSession.builder.getOrCreate()
         self.collect_result = None
-        self.limit = limit
         
-    def read_from_tweet(self, tag_list):
+    def read_from_tweet(self, tag_list, limit):
         for hashtag in tag_list:
             # Get tweets that contain the hashtag #petday
             # -is:retweet means I don't wantretweets
@@ -79,13 +78,13 @@ class Tweet:
             tweets = tweepy.Paginator(self.client.search_recent_tweets, 
                                       query=query,
                                       tweet_fields=['context_annotations', 'created_at'], 
-                                      max_results=100).flatten(limit=self.limit)
+                                      max_results=100).flatten(limit=limit)
 
-        for tweet in tweets:
-            if tweet.id in self.tweet_dic:
-                same_tweet += 1
-            else:
-                self.tweet_dic[tweet.id] = tweet.text
+            for tweet in tweets:
+                if tweet.id in self.tweet_dic:
+                    continue
+                else:
+                    self.tweet_dic[tweet.id] = tweet.text
 
     
     
@@ -110,8 +109,10 @@ class Tweet:
         #with open('collect_result.json', 'w') as f:
             #json.dump(d,f)
     
-    def do(self, tag_list):
-        self.read_from_tweet(tag_list)
+    def do(self, tag_list, limit):
+        self.read_from_tweet(tag_list, limit)
         self.count_by_spark()
         return self.convert_write_json()
+
+
 
